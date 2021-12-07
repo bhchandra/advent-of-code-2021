@@ -42,12 +42,13 @@ fun main() {
 
         val allIndices = input.first().toCharArray().indices
 
-        fun recursiveReduction(input: List<String>, indices: IntRange, criteria: (Freq) -> Char ): String {
-            val indicesToFreq = indicesToFreqMap(input, indices)
-            val bit = indicesToFreq[indices.first]!!.let { criteria.invoke(it) }
-            val filterInput = input.filter { it[indices.first] == bit }
-            if(filterInput.size == 1) return filterInput.first()
-            return recursiveReduction(filterInput, IntRange(indices.first + 1, indices.last), criteria)
+        fun recursiveReduction(input: List<String>, indices: IntRange, criteria: (Freq) -> Char): String {
+            val position = indices.first
+            val indicesToFreq = indicesToFreqMap(input, IntRange(position, position))
+            val bit = indicesToFreq.values.first().let { freq -> criteria(freq) }
+            val stringsWithBitInPosition = input.filter { it[position] == bit }
+            if (stringsWithBitInPosition.size == 1) return stringsWithBitInPosition.first()
+            return recursiveReduction(stringsWithBitInPosition, IntRange(position + 1, indices.last), criteria)
         }
 
         val oxygenRatingBinary = recursiveReduction(input, allIndices, Freq::mostCommon)
